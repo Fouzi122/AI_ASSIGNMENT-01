@@ -43,8 +43,7 @@ int TransitionMatrix1[8][3] = { {2,0,4},{3,1,5},{2,2,6},{3,3,7},{5,0,4},{5,1,5},
 //Tx2SizedMatrix(for test cases)
 int arrTest1[2][2] = { {2,3},{0,7} };
 
-bool child_goal = false;
-bool parent_goal = false;
+
 void inputHeader() {
     cout << "Enter Number of States : ";
     cin >> m;
@@ -78,7 +77,7 @@ void inputTestCases() {
     }
     for (int i = 0; i < t; i++) {
 
-        cout << "------Enter TestCase_" << i << "----------" << endl;
+        cout << "------Enter TestCase_" << i+1 << "----------" << endl;
         cout<<"Enter InitialState (from 0 to " << lastindex << ") : ";
         cin >> arrTest[i][0];
         cout<<"Enter FinalState(from 0 to " <<lastindex << ") : ";
@@ -106,8 +105,11 @@ bool goalTest(Node *start, int goal) {
         return false;
 
 }
+bool child_goal = false;
+bool parent_goal = false;
 //function breathFirstSearch
 Node *breathFirstSeach(int start, int goal) {
+  
     Node* s=new Node;
     s->state = start;
     queue<Node*> frontial;
@@ -154,10 +156,10 @@ Node *breathFirstSeach(int start, int goal) {
    
     return result;
 }
-void findPath(Node *result) {
+void findPath(Node* result) {
     stack<int> store;
 
-    if (parent_goal == false) {
+    if (child_goal) {
         while (result->parent != nullptr)
         {
             store.push(result->action);
@@ -173,17 +175,24 @@ void findPath(Node *result) {
         }
         final = final.substr(0, final.length() - 2);
         cout << final << endl;
+        child_goal = false;
     }
-    else if (parent_goal)
+    else if (parent_goal) {
         cout << "Parent is goal\n";
+        parent_goal = false;
+    }
     else
-        cout << "NO soLUTION EXISTS\n";
+        cout << "NO SOLUTION EXISTS\n";
+
+   
+   
 
 }
 
 
 
 int main() {
+    //sample Test Case
     Node* result = new Node;
     for (int i = 0; i < t; i++) {
         int start = arrTest1[i][0];
@@ -195,7 +204,18 @@ int main() {
         result=breathFirstSeach(start, goal);
         findPath(result);
     }
-
+    
+    inputTestCases();
+    for (int i = 0; i < t; i++) {
+        int start = arrTest[i][0];
+        int goal = arrTest[i][1];
+        cout << "------TestCase_" << i + 1 << "----------" << endl;
+        cout << "Initial State : " << arrStates1[start] << endl;
+        cout << "Final   State : " << arrStates1[goal] << endl;
+        cout << "-----PATH-----: ";
+        result = breathFirstSeach(start, goal);
+        findPath(result);
+    }
 	system("pause");
 	return 0;
 }
